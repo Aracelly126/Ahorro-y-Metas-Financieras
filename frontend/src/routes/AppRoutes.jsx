@@ -14,9 +14,9 @@ const AppRoutes = () => {
       {/* Rutas públicas */}
       {!user && (
         <>
-            <Route path="/login" element={<Login />} />
-            <Route path="/home" element={<Home />} />
-            <Route path="/listgoals" element={<ListGoals />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/home" element={<Home />} />
+          <Route path="/listgoals" element={<ListGoals />} />
           <Route path="*" element={<Navigate to="/login" />} />
         </>
       )}
