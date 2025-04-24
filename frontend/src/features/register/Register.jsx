@@ -1,19 +1,18 @@
 import React, { useState } from "react";
-import { useAuth } from "../context/AuthContext";
-import { registerService } from "../services/authService";
+import { useAuth } from "../../context/AuthContext";
+import { registerService } from "../register/registerService";
 import { validateEmail, validatePassword, validateName, isRequired } from "../../shared/utils/validation";
 
 const Register = () => {
     const { login } = useAuth();
     const [formData, setFormData] = useState({
-        cedula: "",
-        nombre: "",
-        apellido: "",
-        genero: "",
-        fechaNacimiento: "",
-        correo: "",
-        contrasena: "",
-        foto: null
+        user_nombre: "",
+        user_apellido: "",
+        user_genero: "",
+        user_fec_nac: "",
+        email: "",
+        password: "",
+        user_foto: null
     });
     const [error, setError] = useState(null);
 
@@ -28,22 +27,21 @@ const Register = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        const { cedula, nombre, apellido, genero, fechaNacimiento, correo, contrasena, foto } = formData;
+        const {  user_nombre, user_apellido, user_genero, user_fec_nac, email, password, user_foto } = formData;
 
-        if (!isRequired(cedula) || !isRequired(nombre) || !isRequired(apellido) || !isRequired(genero) || !isRequired(fechaNacimiento) || !foto)
+        if (!isRequired(user_nombre) || !isRequired(user_apellido) || !isRequired(user_genero) || !isRequired(user_fec_nac) || !user_foto)
             return setError("Todos los campos son obligatorios.");
-        if (!validateEmail(correo)) return setError("Correo inválido.");
-        if (!validatePassword(contrasena)) return setError("Contraseña débil.");
+        if (!validateEmail(email)) return setError("Correo inválido.");
+        if (!validatePassword(password)) return setError("Contraseña débil.");
 
         const data = new FormData();
-        data.append("cedula", cedula);
-        data.append("nombre", nombre);
-        data.append("apellido", apellido);
-        data.append("genero", genero);
-        data.append("fechaNacimiento", fechaNacimiento);
-        data.append("correo", correo);
-        data.append("contrasena", contrasena);
-        data.append("foto", foto);
+        data.append("user_nombre", user_nombre);
+        data.append("user_apellido", user_apellido);
+        data.append("user_genero", user_genero);
+        data.append("user_fec_nac", user_fec_nac);
+        data.append("email", email);
+        data.append("password", password);
+        data.append("user_foto", user_foto);
 
         const response = await registerService(data);
 
@@ -61,24 +59,23 @@ const Register = () => {
                 {error && <div className="text-sm text-red-600 bg-red-100 border border-red-300 p-2 rounded-md">{error}</div>}
 
                 <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-4">
-                    <input name="cedula" type="text" placeholder="Cédula" className="input" value={formData.cedula} onChange={handleChange} />
-                    <input name="nombre" type="text" placeholder="Nombre" className="input" value={formData.nombre} onChange={handleChange} />
-                    <input name="apellido" type="text" placeholder="Apellido" className="input" value={formData.apellido} onChange={handleChange} />
+                    <input name="user_nombre" type="text" placeholder="Nombre" className="input" value={formData.user_nombre} onChange={handleChange} />
+                    <input name="user_apellido" type="text" placeholder="Apellido" className="input" value={formData.user_apellido} onChange={handleChange} />
 
-                    <select name="genero" className="input" value={formData.genero} onChange={handleChange}>
+                    <select name="user_genero" className="input" value={formData.user_genero} onChange={handleChange}>
                         <option value="">Seleccione género</option>
-                        <option value="Masculino">Masculino</option>
-                        <option value="Femenino">Femenino</option>
-                        <option value="Otro">Otro</option>
+                        <option value="M">Masculino</option>
+                        <option value="F">Femenino</option>
+                        <option value="O">Otro</option>
                     </select>
 
-                    <input name="fechaNacimiento" type="date" className="input" value={formData.fechaNacimiento} onChange={handleChange} />
+                    <input name="user_fec_nac" type="date" className="input" value={formData.user_fec_nac} onChange={handleChange} />
 
-                    <input name="correo" type="email" placeholder="Correo electrónico" className="input" value={formData.correo} onChange={handleChange} />
-                    <input name="contrasena" type="password" placeholder="Contraseña" className="input" value={formData.contrasena} onChange={handleChange} />
+                    <input name="email" type="email" placeholder="Correo electrónico" className="input" value={formData.email} onChange={handleChange} />
+                    <input name="password" type="password" placeholder="Contraseña" className="input" value={formData.password} onChange={handleChange} />
 
                     <label className="text-sm font-medium text-gray-600">Foto de perfil</label>
-                    <input name="foto" type="file" accept="image/*" className="file-input" onChange={handleChange} />
+                    <input name="user_foto" type="file" accept="image/*" className="file-input" onChange={handleChange} />
 
                     <button type="submit" className="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition">Registrarse</button>
                 </form>
