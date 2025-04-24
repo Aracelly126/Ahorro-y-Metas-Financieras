@@ -8,6 +8,24 @@ const goals = [
     total: 2000
   },
   {
+    id: 6,
+    name: "Viaje a Japón",
+    saved: 500,
+    total: 2000
+  },
+  {
+    id: 7,
+    name: "Viaje a Japón",
+    saved: 500,
+    total: 2000
+  },
+  {
+    id: 8,
+    name: "Viaje a Japón",
+    saved: 500,
+    total: 2000
+  },
+  {
     id: 2,
     name: "Laptop nueva",
     saved: 800,
@@ -56,6 +74,5 @@ const ListGoals = ({ onGoalClick }) => {
     </div>
   );
 };
-
 
 export default ListGoals;
