@@ -1,17 +1,26 @@
-// src/pages/Home/Home.jsx
 import { useState } from "react";
-// import SavingsGoals from "../SavingsGoals/SavingsGoals";
-// import Reports from "../Reports/Reports";
-// import Profile from "../Profile/Profile";
-import Login from "../login/Login";
+import ListGoals from "../goals/listGoals"; // Ajusta el path según tu estructura
+import GoalDetail from "../contributions/GoalDetail";
 
 const Home = () => {
   const [activeSection, setActiveSection] = useState("login");
+  const [selectedGoal, setSelectedGoal] = useState(null);
 
   const renderContent = () => {
+    if (selectedGoal) {
+      return (
+        <GoalDetail
+          goal={selectedGoal}
+          onBack={() => setSelectedGoal(null)}
+        />
+      );
+    }
+
     switch (activeSection) {
-      case "login":
-        return <Login />;
+      case "goals":
+        return <ListGoals onGoalClick={(goal) => setSelectedGoal(goal)} />;
+      default:
+        return <div>Sección no implementada</div>;
     }
   };
 
@@ -29,7 +38,10 @@ const Home = () => {
               className={`p-3 rounded-lg hover:bg-indigo-600 transition duration-200 cursor-pointer ${
                 activeSection === "savings" ? "bg-indigo-700" : ""
               }`}
-              onClick={() => setActiveSection("login")}
+              onClick={() => {
+                setActiveSection("goals");
+                setSelectedGoal(null); // Reinicia detalle
+              }}
             >
               Metas de Ahorro
             </li>
@@ -37,7 +49,7 @@ const Home = () => {
               className={`p-3 rounded-lg hover:bg-indigo-600 transition duration-200 cursor-pointer ${
                 activeSection === "reports" ? "bg-indigo-700" : ""
               }`}
-              onClick={() => setActiveSection("")}
+              onClick={() => setActiveSection("reports")}
             >
               Reportes
             </li>
@@ -45,7 +57,7 @@ const Home = () => {
               className={`p-3 rounded-lg hover:bg-indigo-600 transition duration-200 cursor-pointer ${
                 activeSection === "profile" ? "bg-indigo-700" : ""
               }`}
-              onClick={() => setActiveSection("")}
+              onClick={() => setActiveSection("profile")}
             >
               Perfil
             </li>
