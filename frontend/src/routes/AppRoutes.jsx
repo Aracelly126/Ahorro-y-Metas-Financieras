@@ -13,8 +13,11 @@ const AppRoutes = () => {
       {/* Rutas públicas */}
       {!user && (
         <>
+
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/home" element={<Home />} />
           <Route path="*" element={<Navigate to="/login" />} />
         </>
       )}
@@ -23,6 +26,7 @@ const AppRoutes = () => {
       {user && (
         <>
           <Route path="/" element={<Home />} />
+          <Route path="/home" element={<Home />} />
           <Route path="*" element={<Navigate to="/" />} />
         </>
       )}
