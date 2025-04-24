@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { loginService } from "./loginService";
 import { useAuth } from "../../context/AuthContext";
 import { validateEmail, validatePassword } from "../../shared/utils/validation";
-
+import Button from "../../shared/components/Button";
 
 const Login = () => {
     const { Login } = useAuth();
@@ -48,7 +48,7 @@ const Login = () => {
                     onChange={(e) => setContraseña(e.target.value)}
                     required
                 />
-                <button type="submit">Iniciar sesión</button>
+                <Button type="submit">Iniciar sesión</Button>
             </form>
         </div>
     );
