@@ -9,12 +9,21 @@ const Login = () => {
     const [email, setCorreo] = useState("");
     const [password, setContraseña] = useState("");
     const [error, setError] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setIsLoading(true);
+        setError(null);
 
-        if (!validateEmail(email)) return setError("El correo electrónico no es válido.");
-        if (!validatePassword(password)) return setError("La contraseña no es válida.");
+        if (!validateEmail(email)) {
+            setIsLoading(false);
+            return setError("El correo electrónico no es válido.");
+        }
+        if (!validatePassword(password)) {
+            setIsLoading(false);
+            return setError("La contraseña no es válida.");
+        }
         
         try {
             const data = await loginService(email, password);
@@ -25,89 +34,103 @@ const Login = () => {
             }
         } catch (error) {
             setError("Error en la autenticación. Por favor, inténtelo de nuevo.");
+        } finally {
+            setIsLoading(false);
         }
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-            <div className="max-w-md w-full space-y-8 bg-white p-10 rounded-lg shadow-xl">
-            <div className="flex justify-center">
-                    <div className="w-32 h-32 bg-gray-100 rounded-full flex items-center justify-center mb-6 overflow-hidden border-4 border-green-100">
-                        <span className="text-xs text-gray-400">Logo Cooperativa</span>
-                        {/* <img src="/logo-cooperativa.png" alt="Logo Cooperativa" className="w-full h-full object-contain" /> */}
-                    </div>
-                </div>
-                <div className="text-center">
-                    <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
-                        Iniciar sesión
-                    </h2>
-                    <p className="mt-2 text-sm text-gray-600">
-                        Accede a tu cuenta de la cooperativa
-                    </p>
-                </div>
-                
-                {error && (
-                    <div className="rounded-md bg-red-50 p-4">
-                        <div className="flex">
-                            <div className="ml-3">
-                                <p className="text-sm font-medium text-red-800">{error}</p>
-                            </div>
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-gray-50 px-4 py-12">
+            <div className="w-full max-w-md bg-white rounded-xl shadow-lg overflow-hidden">
+                {/* Cabecera con logo */}
+                <div className="bg-blue-600 py-8 px-6 text-center">
+                    <div className="flex justify-center mb-4">
+                        <div className="w-24 h-24 bg-white rounded-full flex items-center justify-center shadow-lg">
+                            {/* Reemplazar con logo real */}
+                            <div className="text-blue-700 font-bold text-xl">COOP</div>
                         </div>
                     </div>
-                )}
+                    <h2 className="text-3xl font-bold text-white">Bienvenido</h2>
+                    <p className="mt-2 text-blue-100">Inicia sesión en tu cuenta</p>
+                </div>
 
-                <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-                    
+                <div className="p-8">
+                    {error && (
+                        <div className="mb-6 p-4 bg-red-50 border-l-4 border-red-500 rounded">
+                            <p className="text-red-700 font-medium">{error}</p>
+                        </div>
+                    )}
+
+                    <form onSubmit={handleSubmit} className="space-y-6">
                         <div>
-                            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+                            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
                                 Correo electrónico
                             </label>
-                            <input
-                                id="email"
-                                name="email"
-                                type="email"
-                                autoComplete="email"
-                                required
-                                className="appearance-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm"
-                                placeholder="correo@cooperativa.com"
-                                value={email}
-                                onChange={(e) => setCorreo(e.target.value)}
-                            />
-                        </div>
-                        <div>
-                            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
-                                Contraseña
-                            </label>
-                            <input
-                                id="password"
-                                name="password"
-                                type="password"
-                                autoComplete="current-password"
-                                required
-                                className="appearance-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm"
-                                placeholder="••••••••"
-                                value={password}
-                                onChange={(e) => setContraseña(e.target.value)}
-                            />
+                            <div className="relative">
+                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <svg className="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                        <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
+                                        <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
+                                    </svg>
+                                </div>
+                                <input
+                                    id="email"
+                                    name="email"
+                                    type="email"
+                                    autoComplete="email"
+                                    required
+                                    className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+                                    placeholder="correo@cooperativa.com"
+                                    value={email}
+                                    onChange={(e) => setCorreo(e.target.value)}
+                                />
+                            </div>
                         </div>
 
-                    <div>
-                        <Button 
-                            type="submit" 
-                            className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors duration-200"
-                        >
-                            Iniciar sesión
-                        </Button>
+                        <div>
+                            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+                                Contraseña
+                            </label>
+                            <div className="relative">
+                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <svg className="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
+                                    </svg>
+                                </div>
+                                <input
+                                    id="password"
+                                    name="password"
+                                    type="password"
+                                    autoComplete="current-password"
+                                    required
+                                    className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+                                    placeholder="••••••••"
+                                    value={password}
+                                    onChange={(e) => setContraseña(e.target.value)}
+                                />
+                            </div>
+                        </div>
+
+                        <div>
+                            <Button 
+                                type="submit"
+                                variant="primary"
+                                className="w-full py-3 px-4 text-lg"
+                                isLoading={isLoading}
+                            >
+                                Iniciar sesión
+                            </Button>
+                        </div>
+                    </form>
+
+                    <div className="mt-8 text-center text-sm text-gray-600">
+                        <p>
+                            ¿No tienes una cuenta?{' '}
+                            <a href="/register" className="font-medium text-blue-600 hover:text-blue-500">
+                                Regístrate aquí
+                            </a>
+                        </p>
                     </div>
-                </form>
-                
-                <div className="text-center text-sm text-gray-600">
-                    <p>
-                        ¿No tienes una cuenta?{' '}
-                        <a href="/register" className="font-medium text-green-600 hover:text-green-500">
-                            Regístrate
-                        </a>
-                    </p>
                 </div>
             </div>
         </div>
