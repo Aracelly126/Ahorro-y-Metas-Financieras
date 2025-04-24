@@ -6,22 +6,22 @@ import Button from "../../shared/components/Button";
 
 const Login = () => {
     const { login } = useAuth();
-    const [correo, setCorreo] = useState("");
-    const [contrasena, setContraseña] = useState("");
+    const [email, setCorreo] = useState("");
+    const [password, setContraseña] = useState("");
     const [error, setError] = useState(null);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (!validateEmail(correo)) return setError("El correo electrónico no es válido.");
-        if (!validatePassword(contrasena)) return setError("La contraseña no es válida.");
+        if (!validateEmail(email)) return setError("El correo electrónico no es válido.");
+        if (!validatePassword(password)) return setError("La contraseña no es válida.");
         
         try {
-            const data = await loginService(correo, contrasena);
+            const data = await loginService(email, password);
             if (data.error) {
                 setError(data.error);
             } else {
-                Login(data);
+                login(data);
             }
         } catch (error) {
             setError("Error en la autenticación. Por favor, inténtelo de nuevo.");
@@ -70,7 +70,7 @@ const Login = () => {
                                 required
                                 className="appearance-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm"
                                 placeholder="correo@cooperativa.com"
-                                value={correo}
+                                value={email}
                                 onChange={(e) => setCorreo(e.target.value)}
                             />
                         </div>
@@ -86,7 +86,7 @@ const Login = () => {
                                 required
                                 className="appearance-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm"
                                 placeholder="••••••••"
-                                value={contrasena}
+                                value={password}
                                 onChange={(e) => setContraseña(e.target.value)}
                             />
                         </div>
@@ -104,7 +104,7 @@ const Login = () => {
                 <div className="text-center text-sm text-gray-600">
                     <p>
                         ¿No tienes una cuenta?{' '}
-                        <a href="#" className="font-medium text-green-600 hover:text-green-500">
+                        <a href="/register" className="font-medium text-green-600 hover:text-green-500">
                             Regístrate
                         </a>
                     </p>
