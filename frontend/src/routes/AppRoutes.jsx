@@ -3,7 +3,7 @@ import React from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import Login from "../features/login/Login";
-import Home from "../features/home/home";
+import Register from "../features/register/Register";
 
 const AppRoutes = () => {
   const { user } = useAuth();
@@ -13,7 +13,8 @@ const AppRoutes = () => {
       {/* Rutas públicas */}
       {!user && (
         <>
-            <Route path="/login" element={<Login />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
           <Route path="*" element={<Navigate to="/login" />} />
         </>
       )}
