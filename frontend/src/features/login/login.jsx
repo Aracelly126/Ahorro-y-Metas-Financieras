@@ -31,6 +31,12 @@ const Login = () => {
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
             <div className="max-w-md w-full space-y-8 bg-white p-10 rounded-lg shadow-xl">
+            <div className="flex justify-center">
+                    <div className="w-32 h-32 bg-gray-100 rounded-full flex items-center justify-center mb-6 overflow-hidden border-4 border-green-100">
+                        <span className="text-xs text-gray-400">Logo Cooperativa</span>
+                        {/* <img src="/logo-cooperativa.png" alt="Logo Cooperativa" className="w-full h-full object-contain" /> */}
+                    </div>
+                </div>
                 <div className="text-center">
                     <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
                         Iniciar sesión
