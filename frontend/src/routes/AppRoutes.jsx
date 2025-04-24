@@ -3,8 +3,8 @@ import React from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import Login from "../features/login/Login";
-import Home from "../features/home/home";
-
+import FormGoal from "../features/goals/listGoals";
+import ListGoals from "../features/goals/listGoals";
 const AppRoutes = () => {
   const { user } = useAuth();
 
@@ -13,7 +13,8 @@ const AppRoutes = () => {
       {/* Rutas públicas */}
       {!user && (
         <>
-            <Route path="/login" element={<Login />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/listGoals" element={<ListGoals />} />
           <Route path="*" element={<Navigate to="/login" />} />
         </>
       )}
@@ -22,6 +23,7 @@ const AppRoutes = () => {
       {user && (
         <>
           <Route path="/" element={<Home />} />
+          <Route path="/goals" element={<formGoal />} />
           <Route path="*" element={<Navigate to="/" />} />
         </>
       )}
