@@ -4,6 +4,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import Login from "../features/login/Login";
 import Register from "../features/register/Register";
+import Home from "../features/home/Home";
 
 const AppRoutes = () => {
   const { user } = useAuth();
