@@ -4,13 +4,13 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import Login from "../features/login/Login";
 import Register from "../features/register/Register";
-import ListGoals from "../features/goals/listGoals";
 import Home from "../features/home/Home";
 
 const AppRoutes = () => {
-  const { user } = useAuth();
-
+  const { auth } = useAuth(); // Obtener el objeto auth del contexto
+  const user = auth?.usuario; 
   return (
+    console.log(user),
     <Routes>
       {/* Rutas públicas */}
       {!user && (
@@ -18,11 +18,6 @@ const AppRoutes = () => {
 
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/home" element={<Home />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/home" element={<Home />} />
-          <Route path="/listgoals" element={<ListGoals />} />
           <Route path="*" element={<Navigate to="/login" />} />
         </>
       )}

@@ -6,7 +6,7 @@ export const AuthProvider = ({ children }) => {
     const [auth, setAuth] = useState(()=>{
         const token = localStorage.getItem('token');
         const user = localStorage.getItem('usuario');
-        return token ? { token, user: JSON.parse(user)} : null;
+        return token ? { token, usuario: JSON.parse(user)} : null;
     });
 
     const login = ({ token, usuario }) => {
