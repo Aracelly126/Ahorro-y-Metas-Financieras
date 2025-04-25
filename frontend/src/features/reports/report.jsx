@@ -19,7 +19,7 @@ const goalsData = [
     target_amount: 2000,
     current_amount: 2000,
     deadline_date: "2025-08-30",
-    status: "completada",
+    status: "cumplido",
   },
   {
     goal_id: 2,
@@ -57,9 +57,9 @@ const Report = ({ darkMode }) => {
   const totalGoals = goalsData.length;
 
   const statusCounts = {
-    completada: goalsData.filter((g) => g.status === "completada").length,
-    "en espera": goalsData.filter((g) => g.status === "en espera").length,
-    vencida: goalsData.filter((g) => g.status === "vencida").length,
+    completada: goalsData.filter((g) => g.status === "cumplido").length,
+    "pendiente": goalsData.filter((g) => g.status === "pendiente").length,
+    vencida: goalsData.filter((g) => g.status === "cancelado").length,
   };
 
   const statusData = Object.keys(statusCounts).map((key) => ({
@@ -204,9 +204,9 @@ const Report = ({ darkMode }) => {
               <p>Fecha límite: {goal.deadline_date}</p>
               <p
                 className={`mt-2 text-sm font-semibold ${
-                  goal.status === "completada"
+                  goal.status === "cumplido"
                     ? "text-green-500"
-                    : goal.status === "vencida"
+                    : goal.status === "cancelado"
                     ? "text-red-500"
                     : "text-blue-500"
                 }`}
