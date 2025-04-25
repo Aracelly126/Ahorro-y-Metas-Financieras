@@ -221,14 +221,11 @@ const ContributionsManager = ({ goal }) => {
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Monto
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Fecha
                   </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Acciones
+                  <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Monto
                   </th>
                 </tr>
               </thead>
@@ -238,12 +235,7 @@ const ContributionsManager = ({ goal }) => {
                     key={contribution.contribution_id}
                     className="hover:bg-gray-50"
                   >
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className="font-medium text-green-600">
-                        ${Number(contribution.amount).toLocaleString()}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-6 py-4 whitespace-nowrap text-center">
                       {contribution.contribution_date
                         ? format(
                             new Date(contribution.contribution_date),
@@ -252,27 +244,12 @@ const ContributionsManager = ({ goal }) => {
                           )
                         : "--"}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                      <button
-                        onClick={() => {
-                          setCurrentContribution(contribution);
-                          setShowModal(true);
-                        }}
-                        className="text-blue-600 hover:text-blue-900 mr-3"
-                        title="Editar"
-                      >
-                        <FaEdit />
-                      </button>
-                      <button
-                        onClick={() =>
-                          handleDelete(contribution.contribution_id)
-                        }
-                        className="text-red-600 hover:text-red-900"
-                        title="Eliminar"
-                      >
-                        <FaTrash />
-                      </button>
+                    <td className="px-6 py-4 whitespace-nowrap text-center">
+                      <span className="font-medium text-green-600">
+                        ${Number(contribution.amount).toLocaleString()}
+                      </span>
                     </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium"></td>
                   </tr>
                 ))}
               </tbody>

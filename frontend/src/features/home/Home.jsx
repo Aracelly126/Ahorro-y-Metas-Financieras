@@ -67,11 +67,16 @@ const Home = () => {
 
     switch (activeSection) {
       case "goals":
-        return <ListGoals onGoalClick={(goal) => setSelectedGoal(goal)} />;
+        return (
+          <ListGoals
+            onGoalClick={(goal) => setSelectedGoal(goal)}
+            darkMode={darkMode}
+          />
+        );
       case "report":
-        return <Report darkMode={darkMode}/>;
+        return <Report darkMode={darkMode} />;
       case "profile":
-        return <Profile darkMode={darkMode}/>;
+        return <Profile darkMode={darkMode} />;
       default:
         return (
           <div className="p-6 bg-white rounded-lg shadow">
