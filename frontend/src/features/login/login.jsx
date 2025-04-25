@@ -3,6 +3,8 @@ import { loginService } from "./loginService";
 import { useAuth } from "../../context/AuthContext";
 import { validateEmail, validatePassword } from "../../shared/utils/validation";
 import Button from "../../shared/components/Button";
+import {useNavigate} from "react-router-dom";
+import { SwalAlert } from "../../shared/components/SwalAlert";
 
 const Login = () => {
     const { login } = useAuth();
@@ -10,6 +12,7 @@ const Login = () => {
     const [password, setContraseña] = useState("");
     const [error, setError] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
+    const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -29,8 +32,11 @@ const Login = () => {
             const data = await loginService(email, password);
             if (data.error) {
                 setError(data.error);
+                SwalAlert.error("Error","El correo electrónico o la contraseña son incorrectos.");
             } else {
                 login(data);
+                await SwalAlert.success("¡Éxito!", "Has iniciado sesión correctamente.");
+                navigate('/home');
             }
         } catch (error) {
             setError("Error en la autenticación. Por favor, inténtelo de nuevo.");
