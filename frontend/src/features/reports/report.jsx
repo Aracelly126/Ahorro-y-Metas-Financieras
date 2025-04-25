@@ -1,3 +1,4 @@
+import React, { useState, Suspense, lazy } from 'react';
 import {
   PieChart,
   Pie,
@@ -10,7 +11,12 @@ import {
   ResponsiveContainer,
   LabelList,
 } from "recharts";
-import { FaFilePdf } from "react-icons/fa";
+import { FaFilePdf, FaSpinner } from "react-icons/fa";
+
+// Importación diferida de los componentes de PDF
+const PDFViewer = lazy(() => import('@react-pdf/renderer').then(module => ({ default: module.PDFViewer })));
+const PDFDownloadLink = lazy(() => import('@react-pdf/renderer').then(module => ({ default: module.PDFDownloadLink })));
+const PdfGenerator = lazy(() => import('./PDFGenerator'));
 
 const goalsData = [
   {
@@ -55,6 +61,9 @@ const COLORS = {
 
 const Report = ({ darkMode }) => {
   const totalGoals = goalsData.length;
+  const [selectedGoal, setSelectedGoal] = useState(null);
+  const [showPdfModal, setShowPdfModal] = useState(false);
+  const [pdfLoading, setPdfLoading] = useState(false);
 
   const statusCounts = {
     completada: goalsData.filter((g) => g.status === "completada").length,
@@ -76,24 +85,30 @@ const Report = ({ darkMode }) => {
     ),
   }));
 
+  const handleViewPdf = async (goal) => {
+    try {
+      setPdfLoading(true);
+      setSelectedGoal(goal);
+      setShowPdfModal(true);
+    } catch (error) {
+      console.error("Error al cargar PDF:", error);
+    } finally {
+      setPdfLoading(false);
+    }
+  };
+
   return (
-    <div
-      className={`p-6 space-y-8 ${darkMode ? "text-white" : "text-gray-900"}`}
-    >
-      <h1
-        className={`text-3xl font-bold ${
-          darkMode ? "text-white" : "text-black"
-        }`}
-      >
+    <div className={`p-6 space-y-8 ${darkMode ? "text-white" : "text-gray-900"}`}>
+      <h1 className={`text-3xl font-bold ${darkMode ? "text-white" : "text-black"}`}>
         Dashboard de Metas
       </h1>
+      
+      {/* Sección de resumen */}
       <div className="grid md:grid-cols-3 gap-4">
         {statusData.map((status) => (
           <div
             key={status.name}
-            className={`p-4 rounded-xl shadow space-y-1 ${
-              darkMode ? "bg-gray-700" : "bg-white"
-            }`}
+            className={`p-4 rounded-xl shadow space-y-1 ${darkMode ? "bg-gray-700" : "bg-white"}`}
           >
             <h2 className="text-xl font-semibold capitalize">{status.name}</h2>
             <p>Total: {status.value}</p>
@@ -102,12 +117,9 @@ const Report = ({ darkMode }) => {
         ))}
       </div>
 
+      {/* Gráficos */}
       <div className="grid md:grid-cols-2 gap-6">
-        <div
-          className={`h-90 rounded-2xl shadow p-4 ${
-            darkMode ? "bg-gray-700" : "bg-white"
-          }`}
-        >
+        <div className={`h-90 rounded-2xl shadow p-4 ${darkMode ? "bg-gray-700" : "bg-white"}`}>
           <h2 className="text-lg font-bold mb-2">Estado de las Metas</h2>
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
@@ -136,14 +148,11 @@ const Report = ({ darkMode }) => {
           </ResponsiveContainer>
         </div>
 
-        <div
-          className={`h-90 rounded-2xl shadow p-4 ${
-            darkMode ? "bg-gray-700" : "bg-white"
-          }`}
-        >
+        <div className={`h-90 rounded-2xl shadow p-4 ${darkMode ? "bg-gray-700" : "bg-white"}`}>
           <h2 className="text-lg font-bold mb-2">Progreso de Metas (%)</h2>
           <ResponsiveContainer width="100%" height="90%">
             <BarChart data={chartData}>
+            <XAxis dataKey="name" />
               <XAxis stroke={darkMode ? "#E5E7EB" : "#6B7280"} />
               <YAxis stroke={darkMode ? "#E5E7EB" : "#6B7280"} />
               <Tooltip
@@ -169,33 +178,32 @@ const Report = ({ darkMode }) => {
         </div>
       </div>
 
+      {/* Detalle de metas */}
       <div>
-        <h2
-          className={`text-xl font-bold mb-4 ${
-            darkMode ? "text-white" : "text-black"
-          }`}
-        >
+        <h2 className={`text-xl font-bold mb-4 ${darkMode ? "text-white" : "text-black"}`}>
           Detalle de Metas
         </h2>
         <div className="grid md:grid-cols-2 gap-4">
           {goalsData.map((goal) => (
             <div
               key={goal.goal_id}
-              className={`p-4 rounded-xl shadow space-y-1 relative ${
-                darkMode ? "bg-gray-700" : "bg-white"
-              }`}
+              className={`p-4 rounded-xl shadow space-y-1 relative ${darkMode ? "bg-gray-700" : "bg-white"}`}
             >
               <button
-                onClick={() =>
-                  console.log(`Generar PDF para meta: ${goal.goal_name}`)
-                }
+                onClick={() => handleViewPdf(goal)}
+                disabled={pdfLoading}
                 className={`absolute top-4 right-4 px-3 py-1 text-sm font-medium rounded-md ${
                   darkMode
                     ? "bg-blue-600 hover:bg-blue-700 text-white"
                     : "bg-blue-100 hover:bg-blue-200 text-blue-800"
-                } transition-colors duration-200 shadow-sm`}
+                } transition-colors duration-200 shadow-sm flex items-center gap-1`}
                 title="Generar PDF"
               >
+                {pdfLoading && goal.goal_id === selectedGoal?.goal_id ? (
+                  <FaSpinner className="animate-spin" />
+                ) : (
+                  <FaFilePdf />
+                )}
                 View PDF
               </button>
               <h3 className="text-lg font-bold pr-8">{goal.goal_name}</h3>
@@ -217,6 +225,59 @@ const Report = ({ darkMode }) => {
           ))}
         </div>
       </div>
+
+      {/* Modal para PDF */}
+      {showPdfModal && selectedGoal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className={`relative rounded-lg shadow-xl max-w-4xl w-full h-[90vh] ${darkMode ? "bg-gray-800" : "bg-white"}`}>
+            <button
+              onClick={() => setShowPdfModal(false)}
+              className={`absolute top-4 right-4 p-2 rounded-full ${
+                darkMode ? "bg-gray-700 hover:bg-gray-600" : "bg-gray-200 hover:bg-gray-300"
+              } z-10`}
+            >
+              ✕
+            </button>
+            
+            <Suspense fallback={
+              <div className="flex items-center justify-center h-full">
+                <FaSpinner className="animate-spin text-4xl" />
+              </div>
+            }>
+              <PDFViewer width="100%" height="100%">
+                <PdfGenerator goal={selectedGoal} darkMode={darkMode} />
+              </PDFViewer>
+              
+              <div className={`absolute bottom-4 right-4 ${
+                darkMode ? "bg-gray-700" : "bg-gray-100"
+              } p-2 rounded`}>
+                <PDFDownloadLink 
+                  document={<PdfGenerator goal={selectedGoal} darkMode={darkMode} />} 
+                  fileName={`meta_${selectedGoal.goal_name.replace(/\s+/g, '_')}.pdf`}
+                >
+                  {({ loading }) => (
+                    <button className={`px-4 py-2 rounded-md flex items-center gap-2 ${
+                      darkMode
+                        ? "bg-blue-600 hover:bg-blue-700 text-white"
+                        : "bg-blue-100 hover:bg-blue-200 text-blue-800"
+                    }`}>
+                      {loading ? (
+                        <>
+                          <FaSpinner className="animate-spin" /> Generando...
+                        </>
+                      ) : (
+                        <>
+                          <FaFilePdf /> Descargar PDF
+                        </>
+                      )}
+                    </button>
+                  )}
+                </PDFDownloadLink>
+              </div>
+            </Suspense>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
