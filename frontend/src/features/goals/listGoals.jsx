@@ -1,52 +1,57 @@
-import React, { useState } from "react";
-import GoalForm from "../../shared/components/GoalForm"; // Asumiendo que GoalForm está en otro archivo
-
-const initialGoals = [
-  {
-    id: 1,
-    name: "Viaje a Japón",
-    saved: 500,
-    total: 2000
-  },
-  {
-    id: 6,
-    name: "Viaje a Japón",
-    saved: 500,
-    total: 2000
-  },
-  {
-    id: 7,
-    name: "Viaje a Japón",
-    saved: 500,
-    total: 2000
-  },
-  {
-    id: 8,
-    name: "Viaje a Japón",
-    saved: 500,
-    total: 2000
-  },
-  {
-    id: 2,
-    name: "Laptop nueva",
-    saved: 800,
-    total: 1200
-  },
-  {
-    id: 3,
-    name: "Fondo de emergencia",
-    saved: 1500,
-    total: 3000
-  }
-];
+import React, { useState, useEffect } from "react";
+import GoalForm from "./GoalForm";
+import { getGoals, createGoal } from "../goals/goalService";
+import { getContributions } from "../contributions/contributionService"; // Importamos el servicio de contribuciones
 
 const ListGoals = ({ onGoalClick }) => {
-  const [goals, setGoals] = useState(initialGoals);
+  const [goals, setGoals] = useState([]);
   const [showGoalForm, setShowGoalForm] = useState(false);
+  const [contributionsByGoal, setContributionsByGoal] = useState({}); // Objeto para almacenar contribuciones por goal_id
 
-  const handleAddNewGoal = (newGoal) => {
-    setGoals([...goals, newGoal]);
-    setShowGoalForm(false);
+  // Cargar las metas y sus contribuciones
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // 1. Obtener todas las metas
+        const goalsData = await getGoals();
+        setGoals(goalsData);
+
+        // 2. Para cada meta, obtener sus contribuciones
+        const contributionsMap = {};
+        await Promise.all(
+          goalsData.map(async (goal) => {
+            const contributions = await getContributions(goal.goal_id);
+            contributionsMap[goal.goal_id] = contributions;
+          })
+        );
+        setContributionsByGoal(contributionsMap);
+      } catch (error) {
+        console.error("Error al cargar datos:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  // Función para calcular el total aportado a una meta
+  const calculateTotalContributions = (goalId) => {
+    const contributions = contributionsByGoal[goalId] || [];
+    return contributions.reduce((sum, contribution) => sum + Number(contribution.amount), 0);
+  };
+
+  const handleAddNewGoal = async (newGoal) => {
+    try {
+      const createdGoal = await createGoal(newGoal);
+      setGoals([...goals, createdGoal]);
+      setShowGoalForm(false);
+      // Inicializar array de contribuciones vacío para la nueva meta
+      setContributionsByGoal(prev => ({
+        ...prev,
+        [createdGoal.goal_id]: []
+      }));
+    } catch (error) {
+      console.error("Error al agregar la meta:", error);
+    }
   };
 
   return (
@@ -64,17 +69,19 @@ const ListGoals = ({ onGoalClick }) => {
         
         <div className="space-y-4">
           {goals.map((goal) => {
-            const percentage = Math.min((goal.saved / goal.total) * 100, 100);
+            const totalContributions = calculateTotalContributions(goal.goal_id);
+            const percentage = Math.min((totalContributions / goal.target_amount) * 100, 100);
+            
             return (
               <div
-                key={goal.id}
+                key={goal.goal_id}
                 className="p-4 bg-white shadow rounded-xl cursor-pointer hover:shadow-lg transition"
                 onClick={() => onGoalClick(goal)}
               >
                 <div className="flex justify-between items-center mb-2">
-                  <h3 className="text-lg font-semibold">{goal.name}</h3>
+                  <h3 className="text-lg font-semibold">{goal.goal_name}</h3>
                   <span className="text-sm text-gray-500">
-                    ${goal.saved} / ${goal.total}
+                    ${totalContributions.toFixed(2)} / ${goal.target_amount}
                   </span>
                 </div>
                 <div className="w-full bg-gray-200 rounded-full h-4 overflow-hidden">
@@ -92,7 +99,6 @@ const ListGoals = ({ onGoalClick }) => {
         </div>
       </div>
 
-      {/* Modal para agregar nueva meta */}
       {showGoalForm && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <GoalForm 
