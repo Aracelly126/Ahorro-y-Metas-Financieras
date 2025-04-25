@@ -265,7 +265,9 @@ const Report = ({ darkMode }) => {
               </button>
               <h3 className="text-lg font-bold pr-8">{goal.goal_name}</h3>
               <p>Objetivo: ${goal.target_amount}</p>
-              <p>Actual: ${goal.current_amount || 0}</p>
+              <p>
+                Actual: ${getTotalContributions(goal.goal_id).toLocaleString()}
+              </p>
               <p>Fecha límite: {goal.deadline_date}</p>
               <p
                 className={`mt-2 text-sm font-semibold ${
@@ -303,7 +305,10 @@ const Report = ({ darkMode }) => {
             </button>
             <Suspense fallback={<div>Loading PDF...</div>}>
               <PDFViewer width="100%" height="100%">
-                <PdfGenerator goal={selectedGoal} />
+                <PdfGenerator
+                  goal={selectedGoal}
+                  contributions={contributions[selectedGoal.goal_id] || []}
+                />
               </PDFViewer>
             </Suspense>
           </div>
