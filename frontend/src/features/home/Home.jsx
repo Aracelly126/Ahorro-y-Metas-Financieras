@@ -1,16 +1,33 @@
 import { useState } from "react";
 import ListGoals from "../goals/listGoals";
 import GoalDetail from "../contributions/GoalDetail";
-import { FaPiggyBank, FaChartBar, FaUser, FaSun, FaMoon,FaUserCircle } from "react-icons/fa";
+import { FaPiggyBank, FaChartBar, FaUser, FaSun, FaMoon, FaUserCircle, FaBell, FaSignOutAlt } from "react-icons/fa";
 import { useAuth } from "../../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 const Home = () => {
-  const [activeSection, setActiveSection] = useState("login");
+  const [activeSection, setActiveSection] = useState("goals");
   const [selectedGoal, setSelectedGoal] = useState(null);
   const [darkMode, setDarkMode] = useState(false);
-  const { auth } = useAuth(); // Obtener usuario del contexto de autenticación
+  const [showNotifications, setShowNotifications] = useState(false);
+  const { auth, logout } = useAuth();
+  const navigate = useNavigate();
   const user = auth?.usuario;
   const foto = user?.user_foto_url;
+
+  // Datos de ejemplo para notificaciones
+  const [notifications] = useState([
+    { id: 1, title: "Nueva meta alcanzada", message: "Has completado tu meta de ahorro para vacaciones", time: "2h ago", read: false },
+    { id: 2, title: "Recordatorio de pago", message: "Tu aporte mensual vence en 3 días", time: "1d ago", read: true },
+    { id: 3, title: "Bienvenida", message: "¡Bienvenido a nuestra cooperativa!", time: "1 semana ago", read: true }
+  ]);
+
+  const unreadNotifications = notifications.filter(n => !n.read).length;
+
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
+  };
 
   const renderContent = () => {
     if (selectedGoal) {
@@ -23,46 +40,57 @@ const Home = () => {
       case "goals":
         return <ListGoals onGoalClick={(goal) => setSelectedGoal(goal)} />;
       case "reports":
-        return <div>Reportes</div>;
+        return <div className="p-6 bg-white rounded-lg shadow">Reportes</div>;
       case "profile":
-        return <div>Perfil</div>;
+        return <div className="p-6 bg-white rounded-lg shadow">Perfil</div>;
       default:
-        return <div>Sección no implementada</div>;
+        return <div className="p-6 bg-white rounded-lg shadow">Sección no implementada</div>;
     }
   };
 
   return (
-    <div className={`flex h-screen ${darkMode ? "bg-gray-800" : "bg-gray-100"}`}>
-      {/* Sidebar con iconos */}
-      <div className={`w-64 ${darkMode ? "bg-blue-900" : "bg-blue-600"} text-white p-4 flex flex-col`}>
-        {/* Encabezado con usuario */}
-        <div className="mb-2 mt-4 flex flex-col items-center">
-          <div className="w-16 h-16 rounded-full bg-white flex items-center justify-center overflow-hidden">
-          {foto ? (
-         <img 
-          src={foto} 
-          alt="Profile" 
-          className="w-full h-full object-cover"
-          onError={(e) => {
-            e.target.onerror = null;
-            e.target.src = '';
-            e.target.parentElement.classList.add('text-blue-600', 'text-4xl');
-          }}
-          />
-          ) : (
-          <FaUserCircle className="text-blue-600 text-4xl" />
-        )}
-
+    <div className={`flex h-screen ${darkMode ? "bg-gray-800 text-white" : "bg-gray-100 text-gray-900"}`}>
+      {/* Sidebar */}
+      <div className={`w-64 ${darkMode ? "bg-blue-900" : "bg-blue-600"} text-white p-4 flex flex-col transition-colors duration-300`}>
+        {/* Logo Cooperativa */}
+        <div className="flex justify-center mb-6 mt-4">
+          <div className="flex items-center justify-center w-48 h-16">
+            <div className="flex items-center">
+              <div className="bg-white text-blue-600 rounded-full p-2 mr-3">
+                <FaPiggyBank className="text-2xl" />
+              </div>
+              <span className="text-xl font-bold">COOP AHORRO</span>
+            </div>
           </div>
-          <h3 className="font-semibold mt-2">
-            {user?.user_nombre || 'Usuario'} {user?.user_apellido || ''}
-          </h3>
-          <p className="text-sm text-blue-200">Ahorrador</p>
         </div>
 
-        {/* Resto del sidebar... */}
-        <nav className="flex-1 mt-8">
-          <ul className="space-y-2">
+        {/* Perfil de usuario */}
+        <div className="mb-8 flex flex-col items-center">
+          <div className="w-20 h-20 rounded-full bg-white flex items-center justify-center overflow-hidden border-2 border-white shadow-md">
+            {foto ? (
+              <img 
+                src={foto} 
+                alt="Profile" 
+                className="w-full h-full object-cover"
+                onError={(e) => {
+                  e.target.onerror = null;
+                  e.target.src = '';
+                  e.target.parentElement.classList.add('text-blue-600', 'text-4xl');
+                }}
+              />
+            ) : (
+              <FaUserCircle className="text-blue-600 text-4xl" />
+            )}
+          </div>
+          <h3 className="font-semibold mt-3 text-center">
+            {user?.user_nombre || 'Usuario'} {user?.user_apellido || ''}
+          </h3>
+          <p className="text-sm text-blue-200">Socio desde: {new Date().getFullYear()}</p>
+        </div>
+
+        {/* Menú de navegación */}
+        <nav className="flex-1">
+          <ul className="space-y-1">
             <li
               className={`flex items-center p-3 rounded-lg transition duration-200 cursor-pointer ${
                 activeSection === "goals"
@@ -78,7 +106,7 @@ const Home = () => {
                 setSelectedGoal(null);
               }}
             >
-              <FaPiggyBank className="mr-3" />
+              <FaPiggyBank className="mr-3 text-lg" />
               <span>Metas de Ahorro</span>
             </li>
 
@@ -94,7 +122,7 @@ const Home = () => {
               }`}
               onClick={() => setActiveSection("reports")}
             >
-              <FaChartBar className="mr-3" />
+              <FaChartBar className="mr-3 text-lg" />
               <span>Reportes</span>
             </li>
 
@@ -110,22 +138,23 @@ const Home = () => {
               }`}
               onClick={() => setActiveSection("profile")}
             >
-              <FaUser className="mr-3" />
+              <FaUser className="mr-3 text-lg" />
               <span>Perfil</span>
             </li>
           </ul>
         </nav>
 
-        <div className="mt-auto p-3">
+        {/* Configuración y cerrar sesión */}
+        <div className="mt-auto space-y-3">
           <div
-            className="flex items-center justify-between p-2 rounded-lg cursor-pointer hover:bg-blue-700 transition duration-200"
+            className="flex items-center justify-between p-3 rounded-lg cursor-pointer hover:bg-blue-700 transition duration-200"
             onClick={() => setDarkMode(!darkMode)}
           >
             <div className="flex items-center">
               {darkMode ? (
-                <FaSun className="mr-3" />
+                <FaSun className="mr-3 text-lg" />
               ) : (
-                <FaMoon className="mr-3" />
+                <FaMoon className="mr-3 text-lg" />
               )}
               <span>Modo {darkMode ? "Claro" : "Oscuro"}</span>
             </div>
@@ -141,12 +170,36 @@ const Home = () => {
               ></div>
             </div>
           </div>
+
+          <div
+            className="flex items-center p-3 rounded-lg cursor-pointer hover:bg-blue-700 transition duration-200"
+            onClick={handleLogout}
+          >
+            <FaSignOutAlt className="mr-3 text-lg" />
+            <span>Cerrar sesión</span>
+          </div>
         </div>
       </div>
 
-      {/* Área de contenido */}
-      <div className="flex-1 overflow-auto p-8">
-        <div className="max-w-4xl mx-auto">{renderContent()}</div>
+      {/* Área de contenido principal */}
+      <div className="flex-1 flex flex-col overflow-hidden">
+        {/* Barra superior con notificaciones */}
+        <header className={`flex justify-between items-center p-4 ${darkMode ? "bg-gray-700" : "bg-white"} shadow-sm`}>
+          <h1 className="text-xl font-semibold">
+            {activeSection === "goals" && "Mis Metas de Ahorro"}
+            {activeSection === "reports" && "Reportes"}
+            {activeSection === "profile" && "Mi Perfil"}
+          </h1>
+          
+          
+        </header>
+
+        {/* Contenido principal */}
+        <main className="flex-1 overflow-auto p-6">
+          <div className="max-w-6xl mx-auto">
+            {renderContent()}
+          </div>
+        </main>
       </div>
     </div>
   );
