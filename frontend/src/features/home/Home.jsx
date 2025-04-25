@@ -14,6 +14,7 @@ import {
 import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import Profile from "../profile/profile";
+import Report from "../reports/report";
 
 const Home = () => {
   const [activeSection, setActiveSection] = useState("goals");
@@ -67,8 +68,8 @@ const Home = () => {
     switch (activeSection) {
       case "goals":
         return <ListGoals onGoalClick={(goal) => setSelectedGoal(goal)} />;
-      case "reports":
-        return <div className="p-6 bg-white rounded-lg shadow">Reportes</div>;
+      case "report":
+        return <Report />;
       case "profile":
         return <Profile />;
       default:
@@ -165,7 +166,7 @@ const Home = () => {
                   ? "hover:bg-blue-800"
                   : "hover:bg-blue-700"
               }`}
-              onClick={() => setActiveSection("reports")}
+              onClick={() => setActiveSection("report")}
             >
               <FaChartBar className="mr-3 text-lg" />
               <span>Reportes</span>
