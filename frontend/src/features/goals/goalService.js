@@ -88,4 +88,5 @@ export const deleteGoal = async (id) => {
     }
 
     return await response.json();
+
 };
