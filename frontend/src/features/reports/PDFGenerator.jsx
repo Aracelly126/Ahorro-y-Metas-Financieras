@@ -1,6 +1,5 @@
-// PdfGenerator.js
 import React from 'react';
-import { Page, Text, View, Document, StyleSheet, Image } from '@react-pdf/renderer';
+import { Page, Text, View, Document, StyleSheet } from '@react-pdf/renderer';
 
 const styles = StyleSheet.create({
   page: {
@@ -61,8 +60,7 @@ const styles = StyleSheet.create({
   },
   progressFill: {
     height: '100%',
-    borderRadius: 5,
-    backgroundColor: '#4CAF50'
+    borderRadius: 5
   },
   status: {
     padding: 4,
@@ -73,12 +71,28 @@ const styles = StyleSheet.create({
   }
 });
 
-const PdfGenerator = ({ goal, darkMode }) => {
-  const progressPercentage = Math.min(100, Math.round((goal.current_amount / goal.target_amount) * 100));
+const PdfGenerator = ({ goal }) => {
+  // Asegurarnos de que current_amount tenga un valor por defecto
+  const currentAmount = goal.current_amount || 0;
+  const progressPercentage = Math.min(100, Math.round((currentAmount / goal.target_amount) * 100));
+  
+  // Colores según el estado de la meta
   const statusColor = {
-    completada: '#10B981',
-    'en espera': '#3B82F6',
-    vencida: '#EF4444'
+    cumplido: '#10B981',    // verde
+    pendiente: '#3B82F6',   // azul
+    cancelado: '#EF4444'    // rojo
+  };
+
+  // Texto descriptivo según el estado
+  const getStatusDescription = () => {
+    switch(goal.goal_state) {
+      case 'cumplido':
+        return '¡Felicidades! Has alcanzado tu objetivo.';
+      case 'cancelado':
+        return 'Esta meta ha sido cancelada. Considera ajustar tus planes.';
+      default:
+        return 'Sigue trabajando para alcanzar tu objetivo antes de la fecha límite.';
+    }
   };
 
   return (
@@ -96,17 +110,17 @@ const PdfGenerator = ({ goal, darkMode }) => {
             
             <View style={styles.goalDetail}>
               <Text style={styles.goalLabel}>Objetivo:</Text>
-              <Text>${goal.target_amount}</Text>
+              <Text>${goal.target_amount.toLocaleString()}</Text>
             </View>
             
             <View style={styles.goalDetail}>
               <Text style={styles.goalLabel}>Ahorrado:</Text>
-              <Text>${goal.current_amount}</Text>
+              <Text>${currentAmount.toLocaleString()}</Text>
             </View>
             
             <View style={styles.goalDetail}>
               <Text style={styles.goalLabel}>Fecha límite:</Text>
-              <Text>{goal.deadline_date}</Text>
+              <Text>{new Date(goal.deadline_date).toLocaleDateString()}</Text>
             </View>
             
             <View style={styles.goalDetail}>
@@ -117,20 +131,17 @@ const PdfGenerator = ({ goal, darkMode }) => {
             <View style={styles.progressBar}>
               <View style={[styles.progressFill, { 
                 width: `${progressPercentage}%`,
-                backgroundColor: statusColor[goal.status] 
+                backgroundColor: statusColor[goal.goal_state] 
               }]} />
             </View>
             
             <View style={styles.goalDetail}>
               <Text style={styles.goalLabel}>Estado:</Text>
-              <Text style={[
-                styles.status, 
-                { 
-                  backgroundColor: `${statusColor[goal.status]}20`,
-                  color: statusColor[goal.status]
-                }
-              ]}>
-                {goal.status}
+              <Text style={[styles.status, { 
+                backgroundColor: `${statusColor[goal.goal_state]}20`, 
+                color: statusColor[goal.goal_state] 
+              }]}>
+                {goal.goal_state}
               </Text>
             </View>
           </View>
@@ -139,10 +150,7 @@ const PdfGenerator = ({ goal, darkMode }) => {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Resumen</Text>
           <Text style={{ fontSize: 12, lineHeight: 1.5 }}>
-            Has completado el {progressPercentage}% de tu meta "{goal.goal_name}". 
-            {goal.status === 'completada' ? ' ¡Felicidades! Has alcanzado tu objetivo.' : 
-             goal.status === 'vencida' ? ' Esta meta ha vencido. Considera ajustar tus planes.' : 
-             ' Sigue trabajando para alcanzar tu objetivo antes de la fecha límite.'}
+            Has completado el {progressPercentage}% de tu meta "{goal.goal_name}". {getStatusDescription()}
           </Text>
         </View>
       </Page>
