@@ -1,21 +1,16 @@
 import { useState } from "react";
 import ListGoals from "../goals/listGoals";
 import GoalDetail from "../contributions/GoalDetail";
-import { 
-  FaPiggyBank, 
-  FaChartBar, 
-  FaUser, 
-  FaSun, 
-  FaMoon,
-  FaUserCircle
-} from "react-icons/fa";
+import { FaPiggyBank, FaChartBar, FaUser, FaSun, FaMoon,FaUserCircle } from "react-icons/fa";
 import { useAuth } from "../../context/AuthContext";
 
 const Home = () => {
   const [activeSection, setActiveSection] = useState("login");
   const [selectedGoal, setSelectedGoal] = useState(null);
   const [darkMode, setDarkMode] = useState(false);
-  const { user } = useAuth(); // Obtener usuario del contexto de autenticación
+  const { auth } = useAuth(); // Obtener usuario del contexto de autenticación
+  const user = auth?.usuario;
+  const foto = user?.user_foto_url;
 
   const renderContent = () => {
     if (selectedGoal) {
@@ -43,20 +38,21 @@ const Home = () => {
         {/* Encabezado con usuario */}
         <div className="mb-2 mt-4 flex flex-col items-center">
           <div className="w-16 h-16 rounded-full bg-white flex items-center justify-center overflow-hidden">
-            {user?.user_foto ? (
-              <img 
-                src={`${import.meta.env.VITE_API_URL}/${user.user_foto}`} 
-                alt="Profile" 
-                className="w-full h-full object-cover"
-                onError={(e) => {
-                  e.target.onerror = null;
-                  e.target.src = '';
-                  e.target.parentElement.classList.add('text-blue-600', 'text-4xl');
-                }}
-              />
-            ) : (
-              <FaUserCircle className="text-blue-600 text-4xl" />
-            )}
+          {foto ? (
+         <img 
+          src={foto} 
+          alt="Profile" 
+          className="w-full h-full object-cover"
+          onError={(e) => {
+            e.target.onerror = null;
+            e.target.src = '';
+            e.target.parentElement.classList.add('text-blue-600', 'text-4xl');
+          }}
+          />
+          ) : (
+          <FaUserCircle className="text-blue-600 text-4xl" />
+        )}
+
           </div>
           <h3 className="font-semibold mt-2">
             {user?.user_nombre || 'Usuario'} {user?.user_apellido || ''}
