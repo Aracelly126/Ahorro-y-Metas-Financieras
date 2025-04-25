@@ -69,7 +69,7 @@ const Home = () => {
       case "goals":
         return <ListGoals onGoalClick={(goal) => setSelectedGoal(goal)} />;
       case "report":
-        return <Report />;
+        return <Report darkMode={darkMode}/>;
       case "profile":
         return <Profile />;
       default:
