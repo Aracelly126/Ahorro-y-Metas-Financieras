@@ -1,9 +1,19 @@
 import { useState } from "react";
 import ListGoals from "../goals/listGoals";
 import GoalDetail from "../contributions/GoalDetail";
-import { FaPiggyBank, FaChartBar, FaUser, FaSun, FaMoon, FaUserCircle, FaBell, FaSignOutAlt } from "react-icons/fa";
+import {
+  FaPiggyBank,
+  FaChartBar,
+  FaUser,
+  FaSun,
+  FaMoon,
+  FaUserCircle,
+  FaBell,
+  FaSignOutAlt,
+} from "react-icons/fa";
 import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import Profile from "../profile/profile";
 
 const Home = () => {
   const [activeSection, setActiveSection] = useState("goals");
@@ -17,12 +27,30 @@ const Home = () => {
 
   // Datos de ejemplo para notificaciones
   const [notifications] = useState([
-    { id: 1, title: "Nueva meta alcanzada", message: "Has completado tu meta de ahorro para vacaciones", time: "2h ago", read: false },
-    { id: 2, title: "Recordatorio de pago", message: "Tu aporte mensual vence en 3 días", time: "1d ago", read: true },
-    { id: 3, title: "Bienvenida", message: "¡Bienvenido a nuestra cooperativa!", time: "1 semana ago", read: true }
+    {
+      id: 1,
+      title: "Nueva meta alcanzada",
+      message: "Has completado tu meta de ahorro para vacaciones",
+      time: "2h ago",
+      read: false,
+    },
+    {
+      id: 2,
+      title: "Recordatorio de pago",
+      message: "Tu aporte mensual vence en 3 días",
+      time: "1d ago",
+      read: true,
+    },
+    {
+      id: 3,
+      title: "Bienvenida",
+      message: "¡Bienvenido a nuestra cooperativa!",
+      time: "1 semana ago",
+      read: true,
+    },
   ]);
 
-  const unreadNotifications = notifications.filter(n => !n.read).length;
+  const unreadNotifications = notifications.filter((n) => !n.read).length;
 
   const handleLogout = () => {
     logout();
@@ -42,16 +70,28 @@ const Home = () => {
       case "reports":
         return <div className="p-6 bg-white rounded-lg shadow">Reportes</div>;
       case "profile":
-        return <div className="p-6 bg-white rounded-lg shadow">Perfil</div>;
+        return <Profile />;
       default:
-        return <div className="p-6 bg-white rounded-lg shadow">Sección no implementada</div>;
+        return (
+          <div className="p-6 bg-white rounded-lg shadow">
+            Sección no implementada
+          </div>
+        );
     }
   };
 
   return (
-    <div className={`flex h-screen ${darkMode ? "bg-gray-800 text-white" : "bg-gray-100 text-gray-900"}`}>
+    <div
+      className={`flex h-screen ${
+        darkMode ? "bg-gray-800 text-white" : "bg-gray-100 text-gray-900"
+      }`}
+    >
       {/* Sidebar */}
-      <div className={`w-64 ${darkMode ? "bg-blue-900" : "bg-blue-600"} text-white p-4 flex flex-col transition-colors duration-300`}>
+      <div
+        className={`w-64 ${
+          darkMode ? "bg-blue-900" : "bg-blue-600"
+        } text-white p-4 flex flex-col transition-colors duration-300`}
+      >
         {/* Logo Cooperativa */}
         <div className="flex justify-center mb-6 mt-4">
           <div className="flex items-center justify-center w-48 h-16">
@@ -68,14 +108,17 @@ const Home = () => {
         <div className="mb-8 flex flex-col items-center">
           <div className="w-20 h-20 rounded-full bg-white flex items-center justify-center overflow-hidden border-2 border-white shadow-md">
             {foto ? (
-              <img 
-                src={foto} 
-                alt="Profile" 
+              <img
+                src={foto}
+                alt="Profile"
                 className="w-full h-full object-cover"
                 onError={(e) => {
                   e.target.onerror = null;
-                  e.target.src = '';
-                  e.target.parentElement.classList.add('text-blue-600', 'text-4xl');
+                  e.target.src = "";
+                  e.target.parentElement.classList.add(
+                    "text-blue-600",
+                    "text-4xl"
+                  );
                 }}
               />
             ) : (
@@ -83,9 +126,11 @@ const Home = () => {
             )}
           </div>
           <h3 className="font-semibold mt-3 text-center">
-            {user?.user_nombre || 'Usuario'} {user?.user_apellido || ''}
+            {user?.user_nombre || "Usuario"} {user?.user_apellido || ""}
           </h3>
-          <p className="text-sm text-blue-200">Socio desde: {new Date().getFullYear()}</p>
+          <p className="text-sm text-blue-200">
+            Socio desde: {new Date().getFullYear()}
+          </p>
         </div>
 
         {/* Menú de navegación */}
@@ -184,21 +229,21 @@ const Home = () => {
       {/* Área de contenido principal */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Barra superior con notificaciones */}
-        <header className={`flex justify-between items-center p-4 ${darkMode ? "bg-gray-700" : "bg-white"} shadow-sm`}>
+        <header
+          className={`flex justify-between items-center p-4 ${
+            darkMode ? "bg-gray-700" : "bg-white"
+          } shadow-sm`}
+        >
           <h1 className="text-xl font-semibold">
             {activeSection === "goals" && "Mis Metas de Ahorro"}
             {activeSection === "reports" && "Reportes"}
             {activeSection === "profile" && "Mi Perfil"}
           </h1>
-          
-          
         </header>
 
         {/* Contenido principal */}
         <main className="flex-1 overflow-auto p-6">
-          <div className="max-w-6xl mx-auto">
-            {renderContent()}
-          </div>
+          <div className="max-w-6xl mx-auto">{renderContent()}</div>
         </main>
       </div>
     </div>
