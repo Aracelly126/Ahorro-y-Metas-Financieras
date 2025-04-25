@@ -71,7 +71,7 @@ const Home = () => {
       case "report":
         return <Report darkMode={darkMode}/>;
       case "profile":
-        return <Profile />;
+        return <Profile darkMode={darkMode}/>;
       default:
         return (
           <div className="p-6 bg-white rounded-lg shadow">
