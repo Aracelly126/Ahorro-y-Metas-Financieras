@@ -59,7 +59,7 @@ const Profile = ({ darkMode }) => {
 
   // Estilo base para campos de visualización y edición
   const fieldStyle = `px-4 py-3 rounded-lg w-full transition ${
-    darkMode ? "bg-gray-700 text-gray-100" : "bg-gray-50 text-gray-800"
+    darkMode ? "bg-gray-700 text-black-100" : "bg-gray-50 text-gray-500"
   }`;
 
   // Estilo para inputs de edición
@@ -71,9 +71,7 @@ const Profile = ({ darkMode }) => {
 
   return (
     <div
-      className={`max-w-4xl mx-auto rounded-xl shadow-lg overflow-hidden transition-colors duration-300 ${
-        darkMode ? "bg-gray-800 text-gray-100" : "bg-white text-gray-800"
-      }`}
+      className={`max-w-4xl mx-auto rounded-xl shadow-lg overflow-hidden transition-colors duration-300`}
     >
       {/* Contenido */}
       <div className="p-6 md:p-8 bg-gray-400 zindex-1">
@@ -137,7 +135,7 @@ const Profile = ({ darkMode }) => {
             )}
           </div>
 
-          {isEditing ? (
+          {/* {isEditing ? (
             <div className="mt-4 flex space-x-3">
               <button
                 onClick={handleSubmit}
@@ -174,7 +172,7 @@ const Profile = ({ darkMode }) => {
             >
               <FaEdit className="mr-2" /> Editar Perfil
             </button>
-          )}
+          )} */}
         </div>
 
         {/* Formulario */}
@@ -186,7 +184,7 @@ const Profile = ({ darkMode }) => {
           <div className="space-y-2">
             <label
               className={`block text-sm font-medium flex items-center ${
-                darkMode ? "text-blue-300" : "text-blue-600"
+                darkMode ? "text-blue-900" : "text-blue-500"
               }`}
             >
               <FaUser className="mr-2" /> Nombre
@@ -214,7 +212,7 @@ const Profile = ({ darkMode }) => {
           <div className="space-y-2">
             <label
               className={`block text-sm font-medium flex items-center ${
-                darkMode ? "text-blue-300" : "text-blue-600"
+                darkMode ? "text-blue-900" : "text-blue-500"
               }`}
             >
               <FaUser className="mr-2" /> Apellido
@@ -242,7 +240,7 @@ const Profile = ({ darkMode }) => {
           <div className="space-y-2">
             <label
               className={`block text-sm font-medium flex items-center ${
-                darkMode ? "text-blue-300" : "text-blue-600"
+                darkMode ? "text-blue-900" : "text-blue-500"
               }`}
             >
               <FaVenusMars className="mr-2" /> Género
@@ -275,7 +273,7 @@ const Profile = ({ darkMode }) => {
           <div className="space-y-2">
             <label
               className={`block text-sm font-medium flex items-center ${
-                darkMode ? "text-blue-300" : "text-blue-600"
+                darkMode ? "text-blue-900" : "text-blue-500"
               }`}
             >
               <FaBirthdayCake className="mr-2" /> Fecha de Nacimiento
@@ -303,7 +301,7 @@ const Profile = ({ darkMode }) => {
           <div className="md:col-span-2 space-y-2">
             <label
               className={`block text-sm font-medium flex items-center ${
-                darkMode ? "text-blue-300" : "text-blue-600"
+                darkMode ? "text-blue-900" : "text-blue-500"
               }`}
             >
               <FaEnvelope className="mr-2" /> Correo Electrónico
@@ -332,7 +330,7 @@ const Profile = ({ darkMode }) => {
             <div className="md:col-span-2 space-y-2">
               <label
                 className={`block text-sm font-medium flex items-center ${
-                  darkMode ? "text-blue-300" : "text-blue-600"
+                  darkMode ? "text-blue-900" : "text-blue-500"
                 }`}
               >
                 <FaLock className="mr-2" /> Nueva Contraseña
